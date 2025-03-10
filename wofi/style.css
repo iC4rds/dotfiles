@@ -1,0 +1,42 @@
+#input {
+    margin: 5px;
+    border: none;
+    color: #cdd6f4; /* Text color */
+    background-color: #313244; /* Surface 0 */
+}
+
+#inner-box {
+    margin: 5px;
+    border: none;
+    background-color: #313244; /* Surface 0 */
+}
+
+#outer-box {
+    margin: 5px;
+    border: none;
+    background-color: #313244; /* Surface 0 */
+}
+
+#scroll {
+    margin: 0px;
+    border: none;
+    background-color: #1e1e2e; /* Base */
+}
+
+#text {
+    margin: 5px;
+    border: none;
+    color: #a6adc8; /* Subtext 0 */
+}
+
+#entry:selected {
+    background-color: #45475a; /* Surface 1 */
+}
+
+/* Add rounded corners to the Wofi window */
+window {
+    border-radius: 10px; /* 10px radius for rounded corners */
+    border: 1px solid #181825; /* Mantle */
+    background-color: #1e1e2e; /* Base */
+    color: #cdd6f4; /* Text color */
+}
