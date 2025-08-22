@@ -15,8 +15,11 @@ This repository contains my carefully curated dotfiles and configuration files f
 - `dunst`: Clean notification daemon setup  
 
 ## Development Tools
-- `nvim`: Neovim configuration with IDE-like features  
-- `cava`: Console-based audio visualizer settings  
+- `nvim`: Vim-fork focused on extensibility and usability  
+- `fastfetch`: A feature-rich and performance oriented system information tool  
+- `cava`: Cross-platform Audio Visualizer  
+- `htop`: Interactive Process viewer  
+- `tty-clock`: Clock using lib ncurses  
 
 ## Screenshots  
 ![Screenshot 1](./screenshots/rice1.1.png)
