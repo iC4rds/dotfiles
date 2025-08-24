@@ -28,7 +28,3 @@ This repository contains my carefully curated dotfiles and configuration files f
 ![Screenshot 4](./screenshots/rice3.2.png)
 ![Screenshot 5](./screenshots/rice3.3.png)
 ![Screenshot 6](./screenshots/rice3.4.png)
-
-
-## 📜 Lizenz
-MIT
