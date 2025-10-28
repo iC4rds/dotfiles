@@ -1,23 +1,20 @@
 #!/usr/bin/env bash
 
-CONFIG="$HOME/.config/wofi/config"
-STYLE="$HOME/.config/wofi/style.css"
+rofi_command="rofi -dmenu
+              -theme ~/.config/rofi/catppuccin_mocha.rasi \
+              -width=600 -height=175 \
+              -cache-file=/dev/null \
+              -hide-scroll -no-actions \
+              -define=matching=fuzzy"
 
-wofi_command="wofi --show dmenu
-              --conf ${CONFIG} --style ${STYLE} \
-              --width=600 --height=175 \
-              --cache-file=/dev/null \
-              --hide-scroll --no-actions \
-              --define=matching=fuzzy"
-
-powermenu="   Powermenu"
+powermenu="    Powermenu"
 wifi="    Wi-Fi"
-bluetooth="  Bluetooth"
+bluetooth="    Bluetooth"
 
 open_menu (){
     options="$powermenu\n$wifi\n$bluetooth"
 
-    chosen="$(echo -e "$options" | $wofi_command --prompt )"
+    chosen="$(echo -e "$options" | $rofi_command --prompt )"
     case $chosen in
         $powermenu)
             if [[ "$?" == 0 ]]; then
@@ -35,7 +32,7 @@ open_menu (){
             ;;
         $bluetooth)
             if [[ "$?" == 0 ]]; then
-                 ~/.config/wofi/wofi-bluetooth.sh
+                 ~/.config/rofi/rofi-bluetooth.sh
              else
                  exit
             fi
@@ -43,8 +40,8 @@ open_menu (){
     esac
 }
 
-if [[ ! `pidof wofi` ]]; then
+if [[ ! `pidof rofi` ]]; then
     open_menu
 else
-    pkill wofi
+    pkill rofi
 fi

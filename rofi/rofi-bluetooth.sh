@@ -1,14 +1,20 @@
 #!/usr/bin/env bash
+#             __ _       _     _            _              _   _
+#  _ __ ___  / _(_)     | |__ | |_   _  ___| |_ ___   ___ | |_| |__
+# | '__/ _ \| |_| |_____| '_ \| | | | |/ _ \ __/ _ \ / _ \| __| '_ \
+# | | | (_) |  _| |_____| |_) | | |_| |  __/ || (_) | (_) | |_| | | |
+# |_|  \___/|_| |_|     |_.__/|_|\__,_|\___|\__\___/ \___/ \__|_| |_|
 #
-# Forked from the excellent rofi-bluetooth script by Nick Clyde
-# (https://github.com/nickclyde/rofi-bluetooth). Simply calls wofi
-# instead of rofi.
+# Author: Nick Clyde (clydedroid)
 #
-# A script that generates a wofi menu that uses bluetoothctl to
+# A script that generates a rofi menu that uses bluetoothctl to
 # connect to bluetooth devices and display status info.
 #
+# Inspired by networkmanager-dmenu (https://github.com/firecat53/networkmanager-dmenu)
+# Thanks to x70b1 (https://github.com/polybar/polybar-scripts/tree/master/polybar-scripts/system-bluetooth-bluetoothctl)
+#
 # Depends on:
-#   Arch repositories: wofi, bluez-utils (contains bluetoothctl)
+#   Arch repositories: rofi, bluez-utils (contains bluetoothctl), bc
 
 # Constants
 divider="---------"
@@ -51,13 +57,12 @@ scan_on() {
 # Toggles scanning state
 toggle_scan() {
     if scan_on; then
-        kill $(pgrep -f "bluetoothctl scan on")
+        kill $(pgrep -f "bluetoothctl --timeout 5 scan on")
         bluetoothctl scan off
         show_menu
     else
-        bluetoothctl scan on &
+        bluetoothctl --timeout 5 scan on
         echo "Scanning..."
-        sleep 5
         show_menu
     fi
 }
@@ -76,7 +81,7 @@ pairable_on() {
 # Toggles pairable state
 toggle_pairable() {
     if pairable_on; then
-        bluetoothctl pairable off
+        bluetoothctl pairable off^
         show_menu
     else
         bluetoothctl pairable on
@@ -118,11 +123,11 @@ device_connected() {
 
 # Toggles device connection
 toggle_connection() {
-    if device_connected $1; then
-        bluetoothctl disconnect $1
+    if device_connected "$1"; then
+        bluetoothctl disconnect "$1"
         device_menu "$device"
     else
-        bluetoothctl connect $1
+        bluetoothctl connect "$1"
         device_menu "$device"
     fi
 }
@@ -141,11 +146,11 @@ device_paired() {
 
 # Toggles device paired state
 toggle_paired() {
-    if device_paired $1; then
-        bluetoothctl remove $1
+    if device_paired "$1"; then
+        bluetoothctl remove "$1"
         device_menu "$device"
     else
-        bluetoothctl pair $1
+        bluetoothctl pair "$1"
         device_menu "$device"
     fi
 }
@@ -164,11 +169,11 @@ device_trusted() {
 
 # Toggles device connection
 toggle_trust() {
-    if device_trusted $1; then
-        bluetoothctl untrust $1
+    if device_trusted "$1"; then
+        bluetoothctl untrust "$1"
         device_menu "$device"
     else
-        bluetoothctl trust $1
+        bluetoothctl trust "$1"
         device_menu "$device"
     fi
 }
@@ -179,12 +184,18 @@ print_status() {
     if power_on; then
         printf ''
 
-        mapfile -t paired_devices < <(bluetoothctl paired-devices | grep Device | cut -d ' ' -f 2)
+        paired_devices_cmd="devices Paired"
+        # Check if an outdated version of bluetoothctl is used to preserve backwards compatibility
+        if (( $(echo "$(bluetoothctl version | cut -d ' ' -f 2) < 5.65" | bc -l) )); then
+            paired_devices_cmd="paired-devices"
+        fi
+
+        mapfile -t paired_devices < <(bluetoothctl $paired_devices_cmd | grep Device | cut -d ' ' -f 2)
         counter=0
 
         for device in "${paired_devices[@]}"; do
-            if device_connected $device; then
-                device_alias=$(bluetoothctl info $device | grep "Alias" | cut -d ' ' -f 2-)
+            if device_connected "$device"; then
+                device_alias=$(bluetoothctl info "$device" | grep "Alias" | cut -d ' ' -f 2-)
 
                 if [ $counter -gt 0 ]; then
                     printf ", %s" "$device_alias"
@@ -206,43 +217,43 @@ device_menu() {
     device=$1
 
     # Get device name and mac address
-    device_name=$(echo $device | cut -d ' ' -f 3-)
-    mac=$(echo $device | cut -d ' ' -f 2)
+    device_name=$(echo "$device" | cut -d ' ' -f 3-)
+    mac=$(echo "$device" | cut -d ' ' -f 2)
 
     # Build options
-    if device_connected $mac; then
+    if device_connected "$mac"; then
         connected="Connected: yes"
     else
         connected="Connected: no"
     fi
-    paired=$(device_paired $mac)
-    trusted=$(device_trusted $mac)
+    paired=$(device_paired "$mac")
+    trusted=$(device_trusted "$mac")
     options="$connected\n$paired\n$trusted\n$divider\n$goback\nExit"
 
-    # Open wofi menu, read chosen option
-    chosen="$(echo -e "$options" | $wofi_command "$device_name")"
+    # Open rofi menu, read chosen option
+    chosen="$(echo -e "$options" | $rofi_command "$device_name")"
 
     # Match chosen option to command
-    case $chosen in
-        "" | $divider)
+    case "$chosen" in
+        "" | "$divider")
             echo "No option chosen."
             ;;
-        $connected)
-            toggle_connection $mac
+        "$connected")
+            toggle_connection "$mac"
             ;;
-        $paired)
-            toggle_paired $mac
+        "$paired")
+            toggle_paired "$mac"
             ;;
-        $trusted)
-            toggle_trust $mac
+        "$trusted")
+            toggle_trust "$mac"
             ;;
-        $goback)
+        "$goback")
             show_menu
             ;;
     esac
 }
 
-# Opens a wofi menu with current bluetooth status and options to connect
+# Opens a rofi menu with current bluetooth status and options to connect
 show_menu() {
     # Get menu options
     if power_on; then
@@ -257,34 +268,31 @@ show_menu() {
         pairable=$(pairable_on)
         discoverable=$(discoverable_on)
 
-        # Options passed to wofi
+        # Options passed to rofi
         options="$devices\n$divider\n$power\n$scan\n$pairable\n$discoverable\nExit"
     else
         power="Power: off"
         options="$power\nExit"
     fi
 
-    # The dynamic_lines option doesn't work for me
-    # for some reason so I'll work around it.
-    lines="$(echo -e "$options" | wc -l)"
-    # Open wofi menu, read chosen option
-    chosen="$(echo -e "$options" | $wofi_command "Bluetooth" -L "$lines")"
+    # Open rofi menu, read chosen option
+    chosen="$(echo -e "$options" | $rofi_command "Bluetooth")"
 
     # Match chosen option to command
-    case $chosen in
-        "" | $divider)
+    case "$chosen" in
+        "" | "$divider")
             echo "No option chosen."
             ;;
-        $power)
+        "$power")
             toggle_power
             ;;
-        $scan)
+        "$scan")
             toggle_scan
             ;;
-        $discoverable)
+        "$discoverable")
             toggle_discoverable
             ;;
-        $pairable)
+        "$pairable")
             toggle_pairable
             ;;
         *)
@@ -296,7 +304,7 @@ show_menu() {
 }
 
 # Rofi command to pipe into, can add any options here
-wofi_command="wofi -d -i -p"
+rofi_command="rofi -dmenu -theme ~/.config/rofi/catppuccin_mocha.rasi $* -p"
 
 case "$1" in
     --status)
