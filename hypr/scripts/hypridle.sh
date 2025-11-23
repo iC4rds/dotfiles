@@ -1,7 +1,5 @@
 #!/bin/bash
 
 killall hypridle
+notify-send "Hypridle restarted"
 hypridle
-
-killall dunst
-notify-send "Hypridle updated"
