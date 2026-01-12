@@ -20,12 +20,26 @@ selected_background="$directory/$selected_background"
 
 # Hyprpaper konfigurieren
 [ -f "$selected_background" ] && cat > ~/.config/hypr/hyprpaper.conf <<EOF
-preload = $selected_background
-wallpaper = $monitor,$selected_background
-wallpaper = $monitor2,$selected_background
-wallpaper = $monitor3,$selected_background
-wallpaper = $monitorSAP,$selected_background
-ipc = off
+wallpaper {
+  monitor = $monitor
+  path = $selected_background
+  fit_mode = cover
+}
+wallpaper {
+  monitor = $monitor2
+  path = $selected_background
+  fit_mode = cover
+}
+wallpaper {
+  monitor = $monitor3
+  path = $selected_background
+  fit_mode = cover
+}
+wallpaper {
+  monitor = $monitorSAP
+  path = $selected_background
+  fit_mode = cover
+}
 EOF
 
 # Hyprpaper neustarten
