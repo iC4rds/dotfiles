@@ -40,6 +40,7 @@ wallpaper {
   path = $selected_background
   fit_mode = cover
 }
+splash = false
 EOF
 
 # Hyprpaper neustarten
