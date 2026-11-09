@@ -1,18 +1,16 @@
 # Dotfiles
 
-This repository contains my carefully curated dotfiles and configuration files for a streamlined Arch Linux workflow with Hyprland. These configurations reflect my personal preferences optimized for productivity, aesthetics, and system performance.
+This repository contains my carefully curated dotfiles and configuration files for Arch Linux with Hyprland. These configurations reflect my personal preferences optimized for productivity and aesthetics.
 
 ## Terminal Environment  
   - `kitty`: GPU-accelerated terminal emulator  
   - `fish`: User-friendly shell with smart completions  
 
-## Window Management
-- `hypr`: Modern Hyprland compositor configurations for a tiling Wayland experience  
-
 ## System Utilities
 - `waybar`: Customized status bar with workspace management  
 - `rofi`/`wofi`: Efficient application launchers  
-- `dunst`: Clean notification daemon setup  
+- `dunst`: Clean notification daemon setup
+- Custom wallpaper changing tool with `rofi`  
 
 ## Development Tools
 - `nvim`: Vim-fork focused on extensibility and usability  
