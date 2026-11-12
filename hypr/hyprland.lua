@@ -120,17 +120,18 @@ hl.config({
             scroll_factor  = 0.4,
         },
     },
-
-    -- 3-finger horizontal swipe to switch workspaces
-    gestures = {
-        workspace_swipe           = true,
-        workspace_swipe_fingers   = 3,
-        workspace_swipe_direction = "horizontal",
-    },
 })
 
 -- per-device mouse sensitivity (check name with: hyprctl devices)
 -- hl.device({ name = "epic-mouse-v1", sensitivity = -0.5 })
+
+
+--################
+--### GESTURES ###
+--################
+
+-- 3-finger horizontal swipe to switch workspaces
+hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })
 
 
 --##################

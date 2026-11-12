@@ -11,7 +11,7 @@ hl.bind(mainMod .. " + M",         hl.dsp.exit())
 hl.bind(mainMod .. " + E",         hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + B",         hl.dsp.exec_cmd(browser))
 hl.bind(mainMod .. " + V",         hl.dsp.window.float())
-hl.bind(mainMod .. " + SHIFT + V", hl.dsp.window.resize({ exact = {680, 370} }))
+hl.bind(mainMod .. " + SHIFT + V", hl.dsp.window.resize({ x = 680, y = 370 }))
 hl.bind(mainMod .. " + SPACE",     hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + R",         hl.dsp.exec_cmd("~/.config/rofi/mainmenu.sh"))
 hl.bind(mainMod .. " + P",         hl.dsp.window.pseudo())
@@ -30,17 +30,17 @@ hl.bind("SHIFT + PRINT",        hl.dsp.exec_cmd("hyprshot -m region"))
 -- wallpaper
 hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("~/.config/hypr/scripts/wall.sh"))
 
--- focus
-hl.bind(mainMod .. " + left",  hl.dsp.window.focus({ direction = "l" }))
-hl.bind(mainMod .. " + right", hl.dsp.window.focus({ direction = "r" }))
-hl.bind(mainMod .. " + up",    hl.dsp.window.focus({ direction = "u" }))
-hl.bind(mainMod .. " + down",  hl.dsp.window.focus({ direction = "d" }))
+-- focus (directional)
+hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left"  }))
+hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
+hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up"    }))
+hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down"  }))
 
 -- switch workspace
 for i = 1, 9 do
-    hl.bind(mainMod .. " + " .. i, hl.dsp.workspace.go(tostring(i)))
+    hl.bind(mainMod .. " + " .. i, hl.dsp.focus({ workspace = tostring(i) }))
 end
-hl.bind(mainMod .. " + 0", hl.dsp.workspace.go("10"))
+hl.bind(mainMod .. " + 0", hl.dsp.focus({ workspace = "10" }))
 
 -- move window to workspace
 for i = 1, 9 do
@@ -53,22 +53,22 @@ hl.bind(mainMod .. " + S",          hl.dsp.workspace.toggle_special("magic"))
 hl.bind(mainMod .. " + SHIFT + S",  hl.dsp.window.move({ workspace = "special:magic" }))
 
 -- scroll through workspaces with mouse wheel
-hl.bind(mainMod .. " + mouse_down", hl.dsp.workspace.go("e+1"))
-hl.bind(mainMod .. " + mouse_up",   hl.dsp.workspace.go("e-1"))
+hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
+hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
 
--- move/resize windows with mouse drag
-hl.bind(mainMod .. " + mouse:272", hl.dsp.window.move_interactive())
-hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize_interactive())
+-- move/resize windows with mouse drag (mouse flag = driven by cursor movement)
+hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
+hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
--- volume (repeat while held)
-hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("~/.config/hypr/scripts/louder.sh"),            { repeat_ = true })
-hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("~/.config/hypr/scripts/quiter.sh"),            { repeat_ = true })
-hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("~/.config/hypr/scripts/mute.sh"),              { repeat_ = true })
-hl.bind("XF86AudioMicMute",     hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"), { repeat_ = true })
+-- volume (repeating while held)
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("~/.config/hypr/scripts/louder.sh"),            { repeating = true })
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("~/.config/hypr/scripts/quiter.sh"),            { repeating = true })
+hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("~/.config/hypr/scripts/mute.sh"),              { repeating = true })
+hl.bind("XF86AudioMicMute",     hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"), { repeating = true })
 
--- brightness (repeat while held)
-hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("~/.config/hypr/scripts/brighter.sh"), { repeat_ = true })
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("~/.config/hypr/scripts/darker.sh"),   { repeat_ = true })
+-- brightness (repeating while held)
+hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("~/.config/hypr/scripts/brighter.sh"), { repeating = true })
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("~/.config/hypr/scripts/darker.sh"),   { repeating = true })
 
 -- media keys (locked = work on lockscreen)
 hl.bind("XF86AudioNext",  hl.dsp.exec_cmd("playerctl next"),       { locked = true })
